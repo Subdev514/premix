@@ -12,12 +12,11 @@ from traceback import format_exception
 import subprocess
 import string
 
-PREFIX = os.environ['PREFIX']
-ANNOUNCEMENT_CHANNEL_ID = os.environ['ANNOUNCEMENT_CHANNEL_ID']
-OWNER_ID = int(os.environ['OWNER_ID'])
+PREFIX = '>'
+OWNER_ID = 722481147287830589
 BOT_TOKEN = os.environ['BOT_TOKEN']
-JDOODLE_CLIENT_ID = os.environ['JDOODLE_CLIENT_ID']
-JDOODLE_CLIENT_SECRET = os.environ['JDOODLE_CLIENT_SECRET']
+# ID_CLIENT_JDOODLE = os.environ['ID_CLIENT_JDOODLE']
+# SECRET_CLIENT_JDOODLE = os.environ['SECRET_CLIENT_JDOODLE']
 no_permission = 'You do not have enough permissions to use this command!'
 green = 0x09ff00
 active_dm_sessions = []
