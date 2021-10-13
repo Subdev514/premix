@@ -15,8 +15,8 @@ import string
 PREFIX = '>'
 OWNER_ID = 722481147287830589
 BOT_TOKEN = os.environ['BOT_TOKEN']
-# ID_CLIENT_JDOODLE = os.environ['ID_CLIENT_JDOODLE']
-# SECRET_CLIENT_JDOODLE = os.environ['SECRET_CLIENT_JDOODLE']
+ID_CLIENT_JDOODLE = os.environ['ID_CLIENT_JDOODLE']
+SECRET_CLIENT_JDOODLE = os.environ['SECRET_CLIENT_JDOODLE']
 no_permission = 'You do not have enough permissions to use this command!'
 green = 0x09ff00
 active_dm_sessions = []
@@ -466,16 +466,41 @@ async def warnings(ctx, member:discord.Member=None):
       else:
         pass
   await ctx.send(embed=embedded)
-    
+
+@bot.command(aliases=['rmwarn', 'warnremove', 'delwarn', 'deletewarn', 'warndel', 'warndelete', 'clearwarn', 'warnclear'])
+async def removewarn(ctx, *, id):
+  warn_exsits = False
+  with open('warns.txt', 'r') as file:
+    lines = file.readlines()
+    for line in file:
+      if line.__contains__(id):
+        warn_exsits = True
+        temp = line.index
+        lines.pop(lines[temp])
+        with open('warns.txt', 'w') as file:
+          file.write('')
+        
+        with open('warns.txt', 'a') as file:
+          for line in lines:
+            file.append(line)
+            
+        break
+    if not warn_exsits:
+      await ctx.send('No such warn.')
 
 @bot.command()
 async def error(ctx, *, value):
   if ctx.author.id in eval_allowed:
     if value == 'true' or value == 'True':
-      error_in_channel = True
       await ctx.send('error changed to true')
     elif value == 'false' or value == 'False':
-      error_in_channel = False
+      @bot.event
+      async def on_command_error(ctx, error):
+        channel = bot.get_channel(890455382181416990)
+        if ctx.guild == None:
+          await channel.send(f'log: {error} from DMS.')
+        else:
+          await channel.send(f'log: {error} from server: {ctx.guild.name}')
       await ctx.send('error changed to false')
     else:
       await ctx.send('invalid value')
@@ -521,8 +546,8 @@ async def javac(ctx, *, a):
     'script' : code,
     'language': "java",
     'versionIndex': "0",
-    'clientId': JDOODLE_CLIENT_ID,
-    'clientSecret': JDOODLE_CLIENT_SECRET,
+    'clientId': ID_CLIENT_JDOODLE,
+    'clientSecret': SECRET_CLIENT_JDOODLE,
 }
 
   r = requests.post('https://api.jdoodle.com/v1/execute', json=program)
@@ -546,8 +571,8 @@ async def python(ctx, *, a):
     'script' : code,
     'language': "python3",
     'versionIndex': "0",
-    'clientId': JDOODLE_CLIENT_ID,
-    'clientSecret': JDOODLE_CLIENT_SECRET,
+    'clientId': ID_CLIENT_JDOODLE,
+    'clientSecret': SECRET_CLIENT_JDOODLE,
 }
 
   r = requests.post('https://api.jdoodle.com/v1/execute', json=program)
@@ -571,8 +596,8 @@ async def nodejs(ctx, *, a):
     'script' : code,
     'language': "nodejs",
     'versionIndex': "0",
-    'clientId': JDOODLE_CLIENT_ID,
-    'clientSecret': JDOODLE_CLIENT_SECRET,
+    'clientId': ID_CLIENT_JDOODLE,
+    'clientSecret': SECRET_CLIENT_JDOODLE,
 }
 
   r = requests.post('https://api.jdoodle.com/v1/execute', json=program)
