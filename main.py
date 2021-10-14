@@ -472,21 +472,29 @@ async def removewarn(ctx, *, id):
   warn_exsits = False
   with open('warns.txt', 'r') as file:
     lines = file.readlines()
-    for line in file:
-      if line.__contains__(id):
+    for i in lines:
+      if id in i:
         warn_exsits = True
-        temp = line.index
-        lines.pop(lines[temp])
-        with open('warns.txt', 'w') as file:
-          file.write('')
-        
-        with open('warns.txt', 'a') as file:
-          for line in lines:
-            file.append(line)
-            
-        break
-    if not warn_exsits:
-      await ctx.send('No such warn.')
+        if ctx.author.guild_permissions.ban_members:
+          try:
+            if int(i.split(",")[1]) == ctx.author.guild.id:
+              lines = lines.pop(lines.index(i))
+              for line in lines:
+                with open ('warns.txt', 'w') as file:
+                  file.write('')
+                with open('warns.txt', 'a') as file:
+                  file.write(line)
+              await ctx.send(f'warn ({id}) was removed from user {bot.get_user(int(i.split(",")[0])).display_name}#{bot.get_user(int(i.split(",")[0])).discriminator}')
+            else:
+              await ctx.send('The warn is not from this server.')
+          except:
+            pass
+        else:
+          await ctx.send(no_permission)
+
+    
+  if not warn_exsits:
+    await ctx.send('No such warn.')
 
 @bot.command()
 async def error(ctx, *, value):
@@ -613,8 +621,8 @@ async def help(ctx, helpcatogory=None):
         embedded.title = 'Help general'
         embedded.description = f'PREFIX = \">\"\nThere are three catogries of command do >help <catogary> to get help on that catogary\nIf you need any more help understanding or using the command you can contact subgamer\n<> - refers to required feild these have to be there for the command to run and\n() - refers to optional feild the command will run without these too'
         embedded.add_field(name='fun', value='8ball, say, dumb, meme, kill, kiss, fuck, hug, cat, owo, origix, meow, sen, nasty')
-        embedded.add_field(name='utils', value='ping, del, random,  av, help, bean, afk, warn, python, javac, js')
-        embedded.add_field(name='admin', value='kick, ban, unban,  mute, unmute, stop')
+        embedded.add_field(name='utils', value='ping, del, random,  av, help, bean, afk, python, javac, js')
+        embedded.add_field(name='mod', value='kick, ban, unban,  mute, unmute, stop, warn, warnings, clearwarn')
         await ctx.send(embed=embedded)
     elif helpcatogory == 'fun':
         embedded = discord.Embed()
@@ -648,7 +656,6 @@ async def help(ctx, helpcatogory=None):
         embedded.add_field(name='stop', value='Stops the bot use this whenever mistakly a large command is triggered or if the bot starts misbehaving')
         embedded.add_field(name='av', value='Shows you pfp')
         embedded.add_field(name='afk (reason for afk)', value='Sets the afk and notifies if they are afk')
-        embedded.add_field(name='warn <@mention to warn> (reason)', value='warns the user mentioned with the reason.')
         embedded.add_field(name='javac ```java\nCODE TO RUN HERE```', value='runs the java code.')
         embedded.add_field(name='python ```python\nCODE TO RUN HERE```', value='runs the python code.')
         embedded.add_field(name='js ```js\nCODE TO RUN HERE```', value='runs the nodejs code.')
@@ -656,15 +663,18 @@ async def help(ctx, helpcatogory=None):
         channel = await ctx.author.create_dm()
         await channel.send(embed=embedded)
         await ctx.send('A dm was sent with the cmds and thier descrpition')
-    elif helpcatogory == 'admin':
+    elif helpcatogory == 'mod':
         embedded = discord.Embed()
         embedded.color = green
-        embedded.title = 'help <admin>'
+        embedded.title = 'help <mod>'
         embedded.add_field(name='kick <@person to kick> (reason)', value='Kicks the mentioned user with or without reason')
         embedded.add_field(name='ban <@person to ban> (reason)', value='Bans the mentioned user with or without reason')
         embedded.add_field(name='unban <name_of_user#tag_of_user>', value='unbans the given user need to use it like >unban someone#6969')
         embedded.add_field(name='mute <@person to be muted> (reason)', value='Mutes the mentioned user with or without reason')
         embedded.add_field(name='unmute <@person to umute>', value='Unmutes a perviously muted person')
+        embedded.add_field(name='warn <id or mention user to warn> (reason)', value='warns the user mentioned with the reason.')
+        embedded.add_field(name='warnings <id or mention user to warn>', value='shows warnings of that user')
+        embedded.add_field(name='clearwarnings <id of warning to clear>', value='clears the warn of that specific id')
         channel = await ctx.author.create_dm()
         await channel.send(embed=embedded)
         await ctx.send('A dm was sent with the cmds and thier descrpition')
